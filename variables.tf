@@ -94,9 +94,9 @@ variable "gke_secret_create" {
 
 variable "github_secret_create" {
   description = "Create a Github Actions secret containing this service account's key"
-  type = object({
+  type = list(object({
     repository = string
     name       = string
-  })
+  }))
   default = null
 }
