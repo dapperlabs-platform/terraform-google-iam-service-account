@@ -158,8 +158,8 @@ resource "kubernetes_secret" "service-account-key-secret" {
 }
 
 resource "github_actions_secret" "repository_secret" {
-  count           = var.github_secret_create == null ? 0 : 1
-  repository      = var.github_secret_create.repository
-  secret_name     = var.github_secret_create.name
+  count           = length(var.github_secret_create)
+  repository      = var.github_secret_create[count.index].repository
+  secret_name     = var.github_secret_create[count.index].name
   plaintext_value = local.key.private_key
 }
