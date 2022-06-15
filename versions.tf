@@ -21,5 +21,9 @@ terraform {
       source  = "integrations/github"
       version = ">= 4.15.1"
     }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.8"
+    }
   }
 }
