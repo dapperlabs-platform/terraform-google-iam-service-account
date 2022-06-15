@@ -98,5 +98,5 @@ variable "github_secret_create" {
     repository = string
     name       = string
   }))
-  default = null
+  default = []
 }
