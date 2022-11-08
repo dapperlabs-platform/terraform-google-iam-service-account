@@ -50,7 +50,7 @@ locals {
       ]
     ]
   ])
-  generate_key = var.generate_key || var.gke_secret_create != null || var.github_secret_create != null
+  generate_key = var.generate_key || var.gke_secret_create != null || length(var.github_secret_create) > 0
   # https://github.com/hashicorp/terraform/issues/22405#issuecomment-591917758
   key = try(
     local.generate_key
