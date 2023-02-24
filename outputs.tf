@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+data "google_project" "project" {
+}
+
 output "service_account" {
   description = "Service account resource."
   value       = local.service_account
@@ -39,4 +42,9 @@ output "key" {
   description = "Service account key."
   sensitive   = true
   value       = local.key
+}
+
+output "github_pool_provider_id" {
+  description = "Identifier for the Github provider"
+  value       = local.add_github_workload_identity_federation ? replace(google_iam_workload_identity_pool_provider.provider[0].id, var.project_id, data.google_project.project.number) : ""
 }
