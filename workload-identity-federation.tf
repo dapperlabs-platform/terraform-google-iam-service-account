@@ -1,11 +1,8 @@
 locals {
   add_github_workload_identity_federation = length(compact([var.github_workload_identity_federation.repository, var.github_workload_identity_federation.environment])) == 2
-  # repository-service-account-name
-  # github_repository  = try(var.github_workload_identity_federation.repository, "")
-  # github_environment = try(var.github_workload_identity_federation.environment, "")
-  github_repository  = var.github_workload_identity_federation.repository
-  github_environment = var.github_workload_identity_federation.environment
-  github_pool_id     = local.add_github_workload_identity_federation ? substr("${split("/", var.github_workload_identity_federation.repository)[1]}-${var.name}", 0, 32) : ""
+  github_repository                       = var.github_workload_identity_federation.repository
+  github_environment                      = var.github_workload_identity_federation.environment
+  github_pool_id                          = local.add_github_workload_identity_federation ? substr("${split("/", var.github_workload_identity_federation.repository)[1]}-${var.name}", 0, 32) : ""
   # only allow workflows from this repository/environment combination to impersonate this service account
   github_attribute_condition = "assertion.repository == \"${local.github_repository}\" && assertion.environment == \"${local.github_environment}\""
   github_issuer_uri          = "https://token.actions.githubusercontent.com"
