@@ -58,6 +58,7 @@ locals {
     : map("", null)
   , {})
   prefix                    = var.prefix != null ? "${var.prefix}-" : ""
+  account_id                = "${local.prefix}${var.name}"
   resource_email_static     = "${local.prefix}${var.name}@${var.project_id}.iam.gserviceaccount.com"
   resource_iam_email_static = "serviceAccount:${local.resource_email_static}"
   resource_iam_email        = local.resource_iam_email_static
@@ -68,17 +69,16 @@ locals {
   )
 }
 
-
 data "google_service_account" "service_account" {
   count      = var.service_account_create ? 0 : 1
   project    = var.project_id
-  account_id = "${local.prefix}${var.name}"
+  account_id = local.account_id
 }
 
 resource "google_service_account" "service_account" {
   count        = var.service_account_create ? 1 : 0
   project      = var.project_id
-  account_id   = "${local.prefix}${var.name}"
+  account_id   = local.account_id
   display_name = var.display_name
 }
 

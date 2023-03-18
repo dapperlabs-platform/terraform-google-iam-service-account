@@ -2,6 +2,8 @@
 
 This module allows simplified creation and management of one a service account and its IAM bindings. A key can optionally be generated and will be stored in Terraform state. To use it create a sensitive output in your root modules referencing the `key` output, then extract the private key from the JSON formatted outputs.
 
+A Github workload identity pool and provider can also be created by setting `github_workload_identity_federation`. The module will also create `<service-account-name>_SERVICE_ACCOUNT` and `<service-account-name>_WORKLOAD_IDENTITY_PROVIDER` Github Environment variables that you can reference from your Github Actions Workflow.
+
 ## Example
 
 ```hcl
@@ -49,6 +51,8 @@ No modules.
 
 | Name | Type |
 |------|------|
+| [github_actions_environment_variable.service_account_github_environment_variables](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_environment_variable) | resource |
+| [github_actions_environment_variable.workload_identity_provider_github_environment_variables](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_environment_variable) | resource |
 | [github_actions_secret.repository_secret](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_secret) | resource |
 | [google-beta_google_iam_workload_identity_pool.github_pool](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/google_iam_workload_identity_pool) | resource |
 | [google-beta_google_iam_workload_identity_pool_provider.provider](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/google_iam_workload_identity_pool_provider) | resource |
@@ -62,6 +66,7 @@ No modules.
 | [google_service_account_key.key](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_key) | resource |
 | [google_storage_bucket_iam_member.bucket-roles](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
 | [kubernetes_secret.service-account-key-secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
+| [google_project.project](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project) | data source |
 | [google_service_account.service_account](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/service_account) | data source |
 
 ## Inputs
@@ -71,7 +76,7 @@ No modules.
 | <a name="input_display_name"></a> [display\_name](#input\_display\_name) | Display name of the service account to create. | `string` | `"Terraform-managed."` | no |
 | <a name="input_generate_key"></a> [generate\_key](#input\_generate\_key) | Generate a key for service account. | `bool` | `false` | no |
 | <a name="input_github_secret_create"></a> [github\_secret\_create](#input\_github\_secret\_create) | Create a Github Actions secret containing this service account's key | <pre>list(object({<br>    repository = string<br>    name       = string<br>  }))</pre> | `[]` | no |
-| <a name="input_github_workload_identity_federation"></a> [github\_workload\_identity\_federation](#input\_github\_workload\_identity\_federation) | Workload identity federation configs for Github Actions | <pre>object({<br>    environment = string<br>    repository  = string<br>  })</pre> | `null` | no |
+| <a name="input_github_workload_identity_federation"></a> [github\_workload\_identity\_federation](#input\_github\_workload\_identity\_federation) | Workload identity federation configs for Github Actions | <pre>object({<br>    environment = optional(string, "")<br>    repository  = optional(string, "")<br>  })</pre> | `{}` | no |
 | <a name="input_gke_secret_create"></a> [gke\_secret\_create](#input\_gke\_secret\_create) | Create GKE Opaque secret containing this service account's key as key.json | <pre>object({<br>    namespace = string<br>  })</pre> | `null` | no |
 | <a name="input_iam"></a> [iam](#input\_iam) | IAM bindings on the service account in {ROLE => [MEMBERS]} format. | `map(list(string))` | `{}` | no |
 | <a name="input_iam_billing_roles"></a> [iam\_billing\_roles](#input\_iam\_billing\_roles) | Project roles granted to the service account, by billing account id. | `map(list(string))` | `{}` | no |

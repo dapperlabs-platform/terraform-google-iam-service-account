@@ -105,7 +105,7 @@ variable "github_workload_identity_federation" {
   description = "Workload identity federation configs for Github Actions"
   type = object({
     environment = optional(string, "")
-    repository  = optional(string, "")
+    repository  = optional(string, "/")
   })
   default = {}
 }

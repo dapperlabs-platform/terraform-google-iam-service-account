@@ -2,6 +2,8 @@
 
 This module allows simplified creation and management of one a service account and its IAM bindings. A key can optionally be generated and will be stored in Terraform state. To use it create a sensitive output in your root modules referencing the `key` output, then extract the private key from the JSON formatted outputs.
 
+A Github workload identity pool and provider can also be created by setting `github_workload_identity_federation`. The module will also create `<service-account-name>_SERVICE_ACCOUNT` and `<service-account-name>_WORKLOAD_IDENTITY_PROVIDER` Github Environment variables that you can reference from your Github Actions Workflow.
+
 ## Example
 
 ```hcl
