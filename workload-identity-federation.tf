@@ -1,5 +1,7 @@
 locals {
-  github_repository                       = var.github_workload_identity_federation.repository
+  github_repository = var.github_workload_identity_federation.repository
+  # github_actions_environment_variable expects repo name only, owner is inferred by the provider
+  repo_name                               = split("/", local.github_repository)[1]
   github_environment                      = var.github_workload_identity_federation.environment
   add_github_workload_identity_federation = length(compact([local.github_repository, local.github_environment])) == 2 ? 1 : 0
   github_pool_id                          = substr("${split("/", local.github_repository)[1]}-${var.name}", 0, 32)
@@ -50,17 +52,17 @@ resource "google_service_account_iam_member" "github_service_account_user" {
   role   = "roles/iam.workloadIdentityUser"
 }
 
-resource "github_actions_environment_variable" "service_account_github_environment_variables" {
+resource "github_actions_environment_variable" "service_account_github_environment_variable" {
   count         = local.add_github_workload_identity_federation
-  repository    = local.github_repository
+  repository    = local.repo_name
   environment   = local.github_environment
   variable_name = "${local.formatted_account_id}_SERVICE_ACCOUNT"
-  value         = local.service_account.name
+  value         = local.service_account.email
 }
 
-resource "github_actions_environment_variable" "workload_identity_provider_github_environment_variables" {
+resource "github_actions_environment_variable" "workload_identity_provider_github_environment_variable" {
   count         = local.add_github_workload_identity_federation
-  repository    = local.github_repository
+  repository    = local.repo_name
   environment   = local.github_environment
   variable_name = "${local.formatted_account_id}_WORKLOAD_IDENTITY_PROVIDER"
   value         = google_iam_workload_identity_pool_provider.provider[0].name
