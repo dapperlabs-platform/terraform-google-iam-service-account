@@ -27,7 +27,7 @@ resource "google_iam_workload_identity_pool_provider" "providers" {
   provider = google-beta
 
   project                            = var.project_id
-  attribute_condition                = "assertion.repository == \"${each.value.repo_name}\" && assertion.environment == \"${each.value.environment}\""
+  attribute_condition                = "assertion.repository == \"${each.value.repository}\" && assertion.environment == \"${each.value.environment}\""
   description                        = "Workload Identity Federation Pool Provider managed by Terraform"
   disabled                           = false
   display_name                       = each.value.pool_id
