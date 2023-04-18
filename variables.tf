@@ -103,9 +103,11 @@ variable "github_secret_create" {
 
 variable "github_workload_identity_federation" {
   description = "Workload identity federation configs for Github Actions"
-  type = object({
-    environment = optional(string, "")
-    repository  = optional(string, "/")
-  })
-  default = {}
+  type = list(
+    object({
+      environment = optional(string, "")
+      repository  = optional(string, "/")
+    })
+  )
+  default = []
 }
