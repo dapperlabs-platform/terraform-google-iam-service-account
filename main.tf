@@ -148,8 +148,9 @@ resource "kubernetes_secret" "service-account-key-secret" {
   count = var.gke_secret_create == null ? 0 : 1
   type  = var.gke_secret_create.type
   metadata {
-    name      = "${local.prefix}${var.name}-service-account-key"
-    namespace = var.gke_secret_create.namespace
+    name        = "${local.prefix}${var.name}-service-account-key"
+    namespace   = var.gke_secret_create.namespace
+    annotations = var.gke_secret_create.annotations
   }
 
   binary_data = {

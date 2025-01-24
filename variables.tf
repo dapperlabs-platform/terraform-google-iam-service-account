@@ -87,8 +87,9 @@ variable "service_account_create" {
 variable "gke_secret_create" {
   description = "Create GKE Opaque secret containing this service account's key as key.json"
   type = object({
-    namespace = string
-    type      = string
+    namespace   = string
+    type        = string
+    annotations = map(string)
   })
   default = null
 }
