@@ -88,6 +88,7 @@ variable "gke_secret_create" {
   description = "Create GKE Opaque secret containing this service account's key as key.json"
   type = object({
     namespace = string
+    type      = string
   })
   default = null
 }
@@ -110,11 +111,4 @@ variable "github_workload_identity_federation" {
     })
   )
   default = []
-}
-
-variable "gke_secret_type" {
-  description = "Type of the secret to create."
-  type        = string
-  default     = "kubernetes.io/opaque"
-
 }
