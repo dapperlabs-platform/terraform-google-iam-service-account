@@ -146,7 +146,7 @@ resource "google_storage_bucket_iam_member" "bucket-roles" {
 
 resource "kubernetes_secret" "service-account-key-secret" {
   count = var.gke_secret_create == null ? 0 : 1
-  type  = "kubernetes.io/opaque"
+  type  = var.gke_secret_type
   metadata {
     name      = "${local.prefix}${var.name}-service-account-key"
     namespace = var.gke_secret_create.namespace

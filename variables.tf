@@ -111,3 +111,10 @@ variable "github_workload_identity_federation" {
   )
   default = []
 }
+
+variable "gke_secret_type" {
+  description = "Type of the secret to create."
+  type        = string
+  default     = "kubernetes.io/opaque"
+
+}
