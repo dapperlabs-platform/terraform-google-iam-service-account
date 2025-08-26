@@ -50,6 +50,20 @@ variable "iam_project_roles" {
   default     = {}
 }
 
+variable "iam_project_roles_conditions" {
+  description = "Project roles granted to the service account, by project id."
+  # We are changing the type to a more structured object
+  type = map(list(object({
+    role = string
+    condition = object({
+      title       = string
+      expression  = string
+      description = optional(string)
+    })
+  })))
+  default = {}
+}
+
 variable "iam_storage_roles" {
   description = "Storage roles granted to the service account, by bucket name."
   type        = map(list(string))

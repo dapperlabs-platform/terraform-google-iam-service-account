@@ -43,6 +43,17 @@ locals {
       ]
     ]
   ])
+  iam_project_pairs_conditions = flatten([
+    for entity, roles in var.iam_project_roles_conditions : [
+      for role_binding in roles : {
+        entity = entity
+        role   = role_binding.role
+
+        condition = try(role_binding.condition, null)
+      }
+    ]
+  ])
+
   iam_storage_pairs = flatten([
     for entity, roles in var.iam_storage_roles : [
       for role in roles : [
@@ -132,6 +143,23 @@ resource "google_project_iam_member" "project-roles" {
   project = each.value.entity
   role    = each.value.role
   member  = local.resource_iam_email
+}
+
+resource "google_project_iam_member" "project-roles-conditions" {
+  for_each = {
+    for pair in local.iam_project_pairs_conditions :
+    "${pair.entity}-${pair.role}" => pair
+  }
+
+  project = each.value.entity
+  role    = each.value.role
+  member  = local.resource_iam_email
+
+  condition {
+    expression  = each.value.condition.expression
+    title       = each.value.condition.title
+    description = try(each.value.condition.description, "")
+  }
 }
 
 resource "google_storage_bucket_iam_member" "bucket-roles" {
