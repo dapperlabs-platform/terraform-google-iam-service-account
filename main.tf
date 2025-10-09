@@ -61,6 +61,14 @@ locals {
       ]
     ]
   ])
+  iam_pairs = flatten([
+    for role, members in var.iam : [
+      for member in members : {
+        role   = role
+        member = member
+      }
+    ]
+  ])
   generate_key = var.generate_key || var.gke_secret_create != null || length(var.github_secret_create) > 0
   # https://github.com/hashicorp/terraform/issues/22405#issuecomment-591917758
   key = try(
@@ -99,10 +107,13 @@ resource "google_service_account_key" "key" {
 }
 
 resource "google_service_account_iam_member" "roles" {
-  for_each           = var.iam
+  for_each = {
+    for pair in local.iam_pairs :
+    "${pair.role}-${pair.member}" => pair
+  }
   service_account_id = local.service_account.name
-  role               = each.key
-  member            = each.value
+  role               = each.value.role
+  member             = each.value.member
 }
 
 resource "google_billing_account_iam_member" "billing-roles" {
