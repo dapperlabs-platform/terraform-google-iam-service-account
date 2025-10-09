@@ -98,7 +98,7 @@ resource "google_service_account_key" "key" {
   service_account_id = local.service_account.email
 }
 
-resource "google_service_account_iam_binding" "roles" {
+resource "google_service_account_iam_member" "roles" {
   for_each           = var.iam
   service_account_id = local.service_account.name
   role               = each.key
