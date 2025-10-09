@@ -101,8 +101,8 @@ resource "google_service_account_iam_binding" "roles" {
 resource "google_service_account_iam_member" "roles" {
   for_each           = var.iam
   service_account_id = local.service_account.name
-  role               = each.role
-  member             = each.member
+  role               = each.key
+  member             = each.value
 }
 
 resource "google_billing_account_iam_member" "billing-roles" {
@@ -130,8 +130,8 @@ resource "google_organization_iam_member" "organization-roles" {
     for pair in local.iam_organization_pairs :
     "${pair.entity}-${pair.role}" => pair
   }
-  org_id = each.value.key
-  role   = each.value.value
+  org_id = each.value.entity
+  role   = each.value.role
   member = local.resource_iam_email
 }
 
