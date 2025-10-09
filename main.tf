@@ -130,8 +130,8 @@ resource "google_organization_iam_member" "organization-roles" {
     for pair in local.iam_organization_pairs :
     "${pair.entity}-${pair.role}" => pair
   }
-  org_id = each.value.entity
-  role   = each.value.role
+  org_id = each.value.key
+  role   = each.value.value
   member = local.resource_iam_email
 }
 
