@@ -21,8 +21,8 @@ variable "generate_key" {
 }
 
 variable "iam" {
-  description = "IAM bindings on the service account in {ROLE => MEMBER} format."
-  type        = map(string)
+  description = "IAM bindings on the service account in {ROLE => [MEMBERS]} format."
+  type        = map(list(string))
   default     = {}
 }
 
