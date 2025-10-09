@@ -93,7 +93,7 @@ resource "google_service_account" "service_account" {
   display_name = var.display_name
 }
 
-resource "google_service_account_iam_binding" "roles" {
+resource "google_service_account_key" "key" {
   for_each           = local.generate_key ? { 1 = 1 } : {}
   service_account_id = local.service_account.email
 }
