@@ -28,7 +28,7 @@ resource "github_repository_environment" "environments" {
   }
 
   wait_timer          = try(each.value.environment_config.wait_timer, 0)
-  can_admins_bypass   = try(each.value.environment_config.can_admins_bypass, true)
+  can_admins_bypass   = try(each.value.environment_config.can_admins_bypass, false)
   prevent_self_review = try(each.value.environment_config.prevent_self_review, false)
 
   dynamic "deployment_branch_policy" {
@@ -87,8 +87,7 @@ resource "github_actions_environment_variable" "service_account_github_environme
   environment   = each.value.environment
   variable_name = "${local.formatted_account_id}_SERVICE_ACCOUNT"
   value         = local.service_account.email
-  # depends_on is resource-level, not per-instance. All environment variables
-  # wait on all environment creations, even if only a subset use create_environment.
+
   depends_on = [github_repository_environment.environments]
 }
 
@@ -98,7 +97,6 @@ resource "github_actions_environment_variable" "workload_identity_provider_githu
   environment   = each.value.environment
   variable_name = "${local.formatted_account_id}_WORKLOAD_IDENTITY_PROVIDER"
   value         = google_iam_workload_identity_pool_provider.providers[each.key].name
-  # depends_on is resource-level, not per-instance. All environment variables
-  # wait on all environment creations, even if only a subset use create_environment.
+
   depends_on = [github_repository_environment.environments]
 }

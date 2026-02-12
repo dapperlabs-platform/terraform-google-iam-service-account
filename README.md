@@ -2,7 +2,7 @@
 
 This module allows simplified creation and management of one a service account and its IAM bindings. A key can optionally be generated and will be stored in Terraform state. To use it create a sensitive output in your root modules referencing the `key` output, then extract the private key from the JSON formatted outputs.
 
-A Github workload identity pool and provider can also be created by setting `github_workload_identity_federation`. The module will also create `<service-account-name>_SERVICE_ACCOUNT` and `<service-account-name>_WORKLOAD_IDENTITY_PROVIDER` Github Environment variables that you can reference from your Github Actions Workflow.
+A Github workload identity pool and provider can also be created by setting `github_workload_identity_federation`. The module will also create `<service-account-name>_SERVICE_ACCOUNT` and `<service-account-name>_WORKLOAD_IDENTITY_PROVIDER` Github Environment variables that you can reference from your Github Actions Workflow. Optionally, set `create_environment = true` within the `github_workload_identity_federation` block to have the module create the GitHub environment automatically. Use `environment_config` to configure reviewers, wait timers, and deployment branch policies.
 
 ## Example
 
@@ -23,6 +23,36 @@ module "myproject-default-service-accounts" {
       "roles/monitoring.metricWriter",
     ]
   }
+}
+```
+
+## Example with Github Environment Creation
+
+```hcl
+module "myproject-default-service-accounts" {
+  source     = "github.com/dapperlabs-platform/terraform-google-iam-service-account?ref=tag"
+  project_id = "myproject"
+  name       = "deploy-sa"
+
+  github_workload_identity_federation = [
+    {
+      environment        = "production"
+      repository         = "myorg/myrepo"
+      create_environment = true
+      environment_config = {
+        reviewers = [
+          {
+            teams = [123456]
+          }
+        ]
+        wait_timer = 5
+        deployment_branch_policy = {
+          protected_branches     = true
+          custom_branch_policies = false
+        }
+      }
+    }
+  ]
 }
 ```
 
