@@ -138,4 +138,12 @@ variable "github_workload_identity_federation" {
     })
   )
   default = []
+
+  validation {
+    condition = alltrue([
+      for o in var.github_workload_identity_federation :
+      !o.create_environment || (o.environment != null && o.environment != "")
+    ])
+    error_message = "environment must be set to a non-empty string when create_environment is true."
+  }
 }

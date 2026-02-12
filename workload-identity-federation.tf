@@ -87,7 +87,9 @@ resource "github_actions_environment_variable" "service_account_github_environme
   environment   = each.value.environment
   variable_name = "${local.formatted_account_id}_SERVICE_ACCOUNT"
   value         = local.service_account.email
-  depends_on    = [github_repository_environment.environments]
+  # depends_on is resource-level, not per-instance. All environment variables
+  # wait on all environment creations, even if only a subset use create_environment.
+  depends_on = [github_repository_environment.environments]
 }
 
 resource "github_actions_environment_variable" "workload_identity_provider_github_environment_variables" {
@@ -96,5 +98,7 @@ resource "github_actions_environment_variable" "workload_identity_provider_githu
   environment   = each.value.environment
   variable_name = "${local.formatted_account_id}_WORKLOAD_IDENTITY_PROVIDER"
   value         = google_iam_workload_identity_pool_provider.providers[each.key].name
-  depends_on    = [github_repository_environment.environments]
+  # depends_on is resource-level, not per-instance. All environment variables
+  # wait on all environment creations, even if only a subset use create_environment.
+  depends_on = [github_repository_environment.environments]
 }
