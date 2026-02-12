@@ -119,8 +119,22 @@ variable "github_workload_identity_federation" {
   description = "Workload identity federation configs for Github Actions"
   type = list(
     object({
-      environment = optional(string, "")
-      repository  = optional(string, "/")
+      environment        = optional(string, "")
+      repository         = optional(string, "/")
+      create_environment = optional(bool, false)
+      environment_config = optional(object({
+        reviewers = optional(list(object({
+          users = optional(list(number), [])
+          teams = optional(list(number), [])
+        })), [])
+        wait_timer          = optional(number, 0)
+        can_admins_bypass   = optional(bool, true)
+        prevent_self_review = optional(bool, false)
+        deployment_branch_policy = optional(object({
+          protected_branches     = bool
+          custom_branch_policies = bool
+        }), null)
+      }), null)
     })
   )
   default = []
