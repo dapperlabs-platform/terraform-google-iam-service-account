@@ -11,6 +11,35 @@ locals {
   formatted_account_id = upper(replace(local.account_id, "-", "_"))
 }
 
+resource "github_repository_environment" "environments" {
+  for_each = {
+    for k, v in local.workload_identity_federation_configs : k => v if v.create_environment
+  }
+
+  repository  = each.value.repo_name
+  environment = each.value.environment
+
+  dynamic "reviewers" {
+    for_each = try(each.value.environment_config.reviewers, [])
+    content {
+      users = try(reviewers.value.users, null)
+      teams = try(reviewers.value.teams, null)
+    }
+  }
+
+  wait_timer          = try(each.value.environment_config.wait_timer, 0)
+  can_admins_bypass   = try(each.value.environment_config.can_admins_bypass, true)
+  prevent_self_review = try(each.value.environment_config.prevent_self_review, false)
+
+  dynamic "deployment_branch_policy" {
+    for_each = try(each.value.environment_config.deployment_branch_policy, null) != null ? [each.value.environment_config.deployment_branch_policy] : []
+    content {
+      protected_branches     = deployment_branch_policy.value.protected_branches
+      custom_branch_policies = deployment_branch_policy.value.custom_branch_policies
+    }
+  }
+}
+
 resource "google_iam_workload_identity_pool" "github_pools" {
   for_each = local.workload_identity_federation_configs
   provider = google-beta
@@ -58,6 +87,7 @@ resource "github_actions_environment_variable" "service_account_github_environme
   environment   = each.value.environment
   variable_name = "${local.formatted_account_id}_SERVICE_ACCOUNT"
   value         = local.service_account.email
+  depends_on    = [github_repository_environment.environments]
 }
 
 resource "github_actions_environment_variable" "workload_identity_provider_github_environment_variables" {
@@ -66,4 +96,5 @@ resource "github_actions_environment_variable" "workload_identity_provider_githu
   environment   = each.value.environment
   variable_name = "${local.formatted_account_id}_WORKLOAD_IDENTITY_PROVIDER"
   value         = google_iam_workload_identity_pool_provider.providers[each.key].name
+  depends_on    = [github_repository_environment.environments]
 }
