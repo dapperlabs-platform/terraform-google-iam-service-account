@@ -163,3 +163,8 @@ resource "github_actions_secret" "repository_secret" {
   secret_name     = var.github_secret_create[count.index].name
   plaintext_value = local.key.private_key
 }
+  # Explicit: the github provider's destroy_on_drift default has changed across
+  # versions, making every plan flip `true -> null`. Pin the intent for all
+  # consumers.
+  destroy_on_drift = true
+}
