@@ -205,8 +205,3 @@ resource "github_actions_secret" "repository_secret" {
   # consumers.
   destroy_on_drift = true
 }
-  # Explicit: the github provider's destroy_on_drift default has changed across
-  # versions, making every plan flip `true -> null`. Pin the intent for all
-  # consumers.
-  destroy_on_drift = true
-}
